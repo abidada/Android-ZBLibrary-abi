@@ -39,12 +39,26 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+
+
+    <!-- WebView定位功能权限 -->
+    <!-- 粗略定位权限，允许一个程序通过网络获取粗略的位置 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 精确定位权限，允许一个程序访问精确位置(GPS定位) -->
+
+    <!-- 写入tbslog.txt需要权限，否则通过QbSdk.setTbsLogClient()接管解决 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- TBS基础权限需求 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
     <application
         android:name=".application.DemoApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:screenOrientation="portrait"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <activity android:name=".DEMO.DemoThreadPoolActivity"></activity>
 
@@ -69,6 +83,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.MyWebViewActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/app_name"
