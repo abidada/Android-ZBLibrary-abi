@@ -10,10 +10,9 @@
 
     <TextView
         android:id="@+id/llAboutWeibo"
-        android:layout_marginTop="30dp"
-
+        android:layout_marginTop="20dp"
         style="@style/content_item_lf_tv"
-        android:text="博客" />
+        android:text="" />
 
     <wendu.dsbridge.DWebView
         android:id="@+id/webview"

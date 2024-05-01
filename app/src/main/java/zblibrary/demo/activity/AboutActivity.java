@@ -208,7 +208,8 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnLo
 	@Override
 	public void onDragBottom(boolean rightToLeft) {
 		if (rightToLeft) {
-			toActivity(WebViewActivity.createIntent(context, "博客", Constant.APP_OFFICIAL_BLOG));
+			toActivity(WebViewActivity.createIntent(context, "", Constant.APP_OFFICIAL_BLOG));
+//			toActivity(WebViewActivity.createIntent(context, "博客", Constant.APP_OFFICIAL_BLOG));
 
 			ivAboutGesture.setImageResource(R.drawable.gesture_right);
 			return;
@@ -257,7 +258,8 @@ public class AboutActivity extends BaseActivity implements OnClickListener, OnLo
 			toActivity(WebViewActivity.createIntent(context, "开发者", Constant.APP_DEVELOPER_WEBSITE));
 			break;
 		case R.id.llAboutWeibo:
-			toActivity(WebViewActivity.createIntent(context, "博客", Constant.APP_OFFICIAL_BLOG));
+//			toActivity(WebViewActivity.createIntent(context, "博客", Constant.APP_OFFICIAL_BLOG));
+			toActivity(WebViewActivity.createIntent(context, "", Constant.APP_OFFICIAL_BLOG));
 			break;
 		case R.id.llAboutContactUs:
 			CommonUtil.sendEmail(context, Constant.APP_OFFICIAL_EMAIL);

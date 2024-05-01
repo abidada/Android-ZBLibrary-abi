@@ -15,18 +15,13 @@ package zblibrary.demo.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.View.OnLongClickListener;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONObject;
 import com.tencent.smtt.export.external.interfaces.ConsoleMessage;
 import com.tencent.smtt.export.external.interfaces.SslError;
 import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
@@ -39,30 +34,13 @@ import com.tencent.smtt.sdk.WebViewClient;
 
 import wendu.dsbridge.DWebView;
 import wendu.dsbridge.OnReturnValue;
-import zblibrary.demo.DEMO.DemoMainActivity;
 import zblibrary.demo.R;
-import zblibrary.demo.model.User;
 import zblibrary.demo.util.Constant;
-import zblibrary.demo.util.MenuUtil;
 import zblibrary.demo.util.h5.JsApi;
 import zblibrary.demo.util.h5.JsEchoApi;
-import zblibrary.demo.view.UserView;
 import zuo.biao.library.base.BaseActivity;
-import zuo.biao.library.base.BaseModel;
-import zuo.biao.library.base.BaseView.OnDataChangedListener;
 import zuo.biao.library.interfaces.OnBottomDragListener;
-import zuo.biao.library.interfaces.OnHttpResponseListener;
-import zuo.biao.library.manager.CacheManager;
-import zuo.biao.library.ui.BottomMenuView;
-import zuo.biao.library.ui.BottomMenuView.OnBottomMenuItemClickListener;
-import zuo.biao.library.ui.BottomMenuWindow;
-import zuo.biao.library.ui.EditTextInfoActivity;
-import zuo.biao.library.ui.TextClearSuit;
-import zuo.biao.library.ui.WebViewActivity;
 import zuo.biao.library.util.CommonUtil;
-import zuo.biao.library.util.JSON;
-import zuo.biao.library.util.Log;
-import zuo.biao.library.util.StringUtil;
 
 /**
  * 联系人资料界面
@@ -108,6 +86,39 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
 //        dwebView.addJavascriptObject(new JsApi(this.getActivity() ), null);
 //        dwebView.addJavascriptObject(new JsEchoApi(), "echo");
 //        dwebView.loadUrl("https://test-b-fat.pingan.com.cn/orionApp/hybirdH5/index.html");
+        // 排版适应屏幕
+        // textZoom:100表示正常，120表示文字放大1.2倍
+        dwebView.getSettings().setTextZoom(80);
+        //该方法可以获取当前文字大小
+        Log.i(TAG, String.valueOf(dwebView.getSettings().getTextZoom()));
+
+        //始终无图：所有图片都不显示
+        //dwebView.getSettings().setLoadsImagesAutomatically(false);
+        //dwebView.getSettings().setBlockNetworkImage(true);
+
+        //2.4 夜间模式
+        // enable:true(日间模式)，enable：false（夜间模式）
+        //mWebView.getSettingsExtension().setDayOrNight(eanble);
+
+        //2.5 form保存及自动填充
+        // 是否记录并提示用户填充对应form元素，内核默认是true
+        //dwebView.getSettings().setSaveFormData(true);
+
+
+        //2.6 设置网页背景色
+        //        在网页未设置背景色的情况下设置网页默认背景色
+        //dwebView.setWebChromeClient(new WebChromeClient() {
+        //    @Override
+        //    public void openFileChooser(
+        //            ValueCallback<Uri> uploadFile,
+        //            String acceptType,
+        //            String captureType) {
+        //        System.out.println("uploadFile = " + uploadFile);
+        //        //保存对应的valuecallback供选择后使用
+        //        //通过startActivityForResult启动文件选择窗口或自定义文件选择
+        //    }
+        //});
+
         dwebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView webView, int i, String s, String s1) {
@@ -145,8 +156,8 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
 //        dwebView.loadUrl("http://22.6.144.116:8899/"); //wifi: pab-app
 //        dwebView.loadUrl("https://test-b-fat.pingan.com.cn/orionApp/hybirdH5/index.html");
 //        dwebView.loadUrl("192.168.0.112:886");
-        dwebView.loadUrl("192.168.0.112:887");
-        dwebView.loadUrl("https://dz.xcxgy.cn/forum.php?mod=index&mobile=2");
+//        dwebView.loadUrl("192.168.0.112:887");
+        dwebView.loadUrl("https://zhongyi666.top");
 
 
 //        test  temp
@@ -176,7 +187,8 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
 
     @Override
     public void initEvent() {
-        findView(R.id.llAboutWeibo, this).setOnLongClickListener(this);
+//        findView(R.id.llAboutWeibo, this).setOnLongClickListener(this);
+        this.showToast("Android原生toast");
     }
 
     //系统自带监听方法<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

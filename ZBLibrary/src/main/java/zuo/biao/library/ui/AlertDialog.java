@@ -79,8 +79,7 @@ public class AlertDialog extends Dialog implements android.view.View.OnClickList
 		this.requestCode = requestCode;
 		this.listener = listener;  
 	}
-	public AlertDialog(Context context, String title, String message, 
-			String strPositive, String strNegative, int requestCode, OnDialogButtonClickListener listener) {
+	public AlertDialog(Context context) {
 		super(context, R.style.MyDialog);
 
 		this.context = context;
