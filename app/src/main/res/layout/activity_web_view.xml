@@ -14,11 +14,21 @@
         style="@style/content_item_lf_tv"
         android:text="" />
 
-    <wendu.dsbridge.DWebView
-        android:id="@+id/webview"
+    <!--<wendu.dsbridge.DWebView-->
+    <!--    android:id="@+id/webview"-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="match_parent"-->
+    <!--    android:visibility="visible" />-->
+    <FrameLayout
+        android:id="@+id/webViewContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible" />
+        android:background="@android:color/darker_gray">
+        <View
+            android:id="@+id/select_popup_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+    </FrameLayout>
 
 
 </LinearLayout>

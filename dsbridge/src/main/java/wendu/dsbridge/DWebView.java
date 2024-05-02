@@ -1,5 +1,7 @@
 package wendu.dsbridge;
 
+import static android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,11 +23,14 @@ import android.webkit.JavascriptInterface;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
+import androidx.annotation.Keep;
+
 import com.tencent.smtt.export.external.interfaces.ConsoleMessage;
 import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
 import com.tencent.smtt.export.external.interfaces.JsPromptResult;
 import com.tencent.smtt.export.external.interfaces.JsResult;
+import com.tencent.smtt.export.external.interfaces.PermissionRequest;
 import com.tencent.smtt.sdk.CookieManager;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -38,16 +43,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW;
-
-import androidx.annotation.Keep;
 
 
 /**
@@ -55,6 +55,7 @@ import androidx.annotation.Keep;
  */
 //todo: 此X5-WebView先用着， 它以前原生的WebView改造代码新一下,如果X5-WebView出了问题,只能合并这2个它demo,代码对比,以原生为主改造
 public class DWebView extends WebView {
+    private String TAG = "DWebView";
     private static final String BRIDGE_NAME = "_dsbridge";
     private static final String LOG_TAG = "dsBridge";
     private static boolean isDebug = false;
@@ -255,13 +256,14 @@ public class DWebView extends WebView {
             CookieManager.getInstance().setAcceptThirdPartyCookies(this, true);
             settings.setMixedContentMode(MIXED_CONTENT_ALWAYS_ALLOW);
         }
-        settings.setAllowFileAccess(false);
-        settings.setAppCacheEnabled(false);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        //settings.setAllowFileAccess(false);
+        settings.setAppCacheEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        //settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setJavaScriptEnabled(true);
         settings.setLoadWithOverviewMode(true);
-        settings.setAppCachePath(APP_CACHE_DIRNAME);
         settings.setUseWideViewPort(true);
+        settings.setAppCachePath(APP_CACHE_DIRNAME);
         super.setWebChromeClient(mWebChromeClient);
         addInternalJavascriptObject();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
@@ -270,9 +272,7 @@ public class DWebView extends WebView {
             // add bridge tag in lower android version
             settings.setUserAgentString(settings.getUserAgentString() + " _dsbridge");
         }
-
     }
-
     private String[] parseNamespace(String method) {
         int pos = method.lastIndexOf('.');
         String namespace = "";
@@ -575,6 +575,15 @@ public class DWebView extends WebView {
     }
 
     private WebChromeClient mWebChromeClient = new WebChromeClient() {
+        @Override
+        public void onPermissionRequest(PermissionRequest permissionRequest) {
+            super.onPermissionRequest(permissionRequest);
+        }
+
+        @Override
+        public void onPermissionRequestCanceled(PermissionRequest permissionRequest) {
+            super.onPermissionRequestCanceled(permissionRequest);
+        }
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {

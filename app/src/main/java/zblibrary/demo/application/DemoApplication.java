@@ -14,13 +14,18 @@ limitations under the License.*/
 
 package zblibrary.demo.application;
 
-import zblibrary.demo.manager.DataManager;
-import zblibrary.demo.model.User;
-import zuo.biao.library.base.BaseApplication;
-import zuo.biao.library.util.StringUtil;
+import android.content.Intent;
 import android.util.Log;
 
 import com.tencent.smtt.sdk.QbSdk;
+import com.tencent.smtt.sdk.TbsListener;
+import com.tencent.smtt.sdk.WebView;
+
+import zblibrary.demo.manager.DataManager;
+import zblibrary.demo.model.User;
+import zblibrary.demo.util.X5ProcessInitService;
+import zuo.biao.library.base.BaseApplication;
+import zuo.biao.library.util.StringUtil;
 
 /**Application
  * @author Lemon
@@ -37,7 +42,44 @@ public class DemoApplication extends BaseApplication {
 	public void onCreate() {
 		super.onCreate();
 		context = this;
+		/* [new] 独立Web进程演示 */
+		if (!startX5WebProcessPreinitService()) {
+			return;
+		}
+
 		QbSdk.setDownloadWithoutWifi(true);
+
+		QbSdk.setCoreMinVersion(QbSdk.CORE_VER_ENABLE_202112);
+
+		/* SDK内核初始化周期回调，包括 下载、安装、加载 */
+		QbSdk.setTbsListener(new TbsListener() {
+
+			/**
+			 * @param stateCode 用户可处理错误码请参考{@link com.tencent.smtt.sdk.TbsCommonCode}
+			 */
+			@Override
+			public void onDownloadFinish(int stateCode) {
+				Log.i(TAG, "onDownloadFinished: " + stateCode);
+			}
+
+			/**
+			 * @param stateCode 用户可处理错误码请参考{@link com.tencent.smtt.sdk.TbsCommonCode}
+			 */
+			@Override
+			public void onInstallFinish(int stateCode) {
+				Log.i(TAG, "onInstallFinished: " + stateCode);
+			}
+
+			/**
+			 * 首次安装应用，会触发内核下载，此时会有内核下载的进度回调。
+			 * @param progress 0 - 100
+			 */
+			@Override
+			public void onDownloadProgress(int progress) {
+				Log.i(TAG, "Core Downloading: " + progress);
+			}
+		});
+
 		/* 此过程包括X5内核的下载、预初始化，接入方不需要接管处理x5的初始化流程，希望无感接入 */
 		QbSdk.initX5Environment(this, new QbSdk.PreInitCallback() {
 			@Override
@@ -61,6 +103,28 @@ public class DemoApplication extends BaseApplication {
 		});
 
 
+	}
+
+	/**
+	 * 启动X5 独立Web进程的预加载服务。优点：
+	 * 1、后台启动，用户无感进程切换
+	 * 2、启动进程服务后，有X5内核时，X5预加载内核
+	 * 3、Web进程Crash时，不会使得整个应用进程crash掉
+	 * 4、隔离主进程的内存，降低网页导致的App OOM概率。
+	 *
+	 * 缺点：
+	 * 进程的创建占用手机整体的内存，demo 约为 150 MB
+	 */
+	private boolean startX5WebProcessPreinitService() {
+		String currentProcessName = QbSdk.getCurrentProcessName(this);
+		// 设置多进程数据目录隔离，不设置的话系统内核多个进程使用WebView会crash，X5下可能ANR
+		WebView.setDataDirectorySuffix(QbSdk.getCurrentProcessName(this));
+		Log.i(TAG, currentProcessName);
+		if (currentProcessName.equals(this.getPackageName())) {
+			this.startService(new Intent(this, X5ProcessInitService.class));
+			return true;
+		}
+		return false;
 	}
 
 	
