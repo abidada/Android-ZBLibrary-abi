@@ -455,6 +455,15 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                     }
                     mFilePathCallback = null;
                 }
+            } else {
+                //没有选择任何文件,直接选择返回:
+                //模拟一个空的uri,回调回去,才能状态设置初始化,才能继续重新选择文件
+                if (mFilePathCallback != null) {
+                    mFilePathCallback.onReceiveValue(null);
+                    //mFilePathCallback.onReceiveValue(new Uri[]{Uri.parse("")});
+                    //content://com.android.providers.media.documents/document/image%3A31104
+                    mFilePathCallback = null;
+                }
             }
         } else {
             // zxing扫描
