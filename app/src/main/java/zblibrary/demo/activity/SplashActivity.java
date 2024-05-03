@@ -14,7 +14,6 @@ limitations under the License.*/
 
 package zblibrary.demo.activity;
 
-import zblibrary.demo.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;

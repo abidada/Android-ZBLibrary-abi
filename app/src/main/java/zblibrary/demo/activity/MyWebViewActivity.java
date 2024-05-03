@@ -29,11 +29,14 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -101,6 +104,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     public void initView() {
         // 初始化webview
         initWebView();
+        initButtons();
     }
 
     private static final int DISABLE_ALPHA = 120;
@@ -113,8 +117,12 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     private GeolocationPermissionsCallback mGeolocationCallback;
     private String locationPermissionUrl;
 
+    /**
+     * webview选择文件
+     *
+     * @param isMulti 是否是多选
+     */
     private void openFileChooseProcess(boolean isMulti) {
-
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         intent.setType("*/*");
@@ -151,7 +159,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 Log.i(TAG, "onProgressChanged, newProgress:" + newProgress + ", view:" + view);
-                //changGoForwardButton(view);
+                changGoForwardButton(view);
             }
 
             @Override
@@ -239,7 +247,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
 
         WebSettings webSetting = dwebView.getSettings();
         webSetting.setJavaScriptEnabled(true);
-        webSetting.setAllowFileAccess(true);
+        webSetting.setAllowFileAccess(false);
         webSetting.setSupportZoom(true);
         webSetting.setDatabaseEnabled(true);
         webSetting.setAllowFileAccess(true);
@@ -358,7 +366,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.i(TAG, "onPageFinished, view:" + view + ", url:" + url);
-                //changGoForwardButton(view);
+                changGoForwardButton(view);
             }
 
             @Override
@@ -388,6 +396,134 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
         });
     }
 
+
+    private ImageButton mBackBtn;
+    private ImageButton mForwardBtn;
+    private EditText mUrlEditText;
+
+    private void initButtons() {
+        final Context context = this.getApplicationContext();
+        mBackBtn = findViewById(R.id.btn_back);
+        mBackBtn.setImageAlpha(DISABLE_ALPHA);
+        mBackBtn.setEnabled(false);
+        mBackBtn.setOnClickListener(view -> {
+            if (dwebView != null && dwebView.canGoBack()) {
+                dwebView.goBack();
+            }
+        });
+
+        mForwardBtn = findViewById(R.id.btn_forward);
+        mForwardBtn.setEnabled(false);
+        mForwardBtn.setImageAlpha(DISABLE_ALPHA);
+        mForwardBtn.setOnClickListener(view -> {
+            if (dwebView != null && dwebView.canGoForward()) {
+                dwebView.goForward();
+            }
+        });
+
+        findViewById(R.id.btn_more).setOnClickListener(this::showPopupMenu);
+        findViewById(R.id.btn_reload).setOnClickListener(view -> {
+            if (dwebView != null) {
+                dwebView.reload();
+            }
+        });
+        findViewById(R.id.btn_exit).setOnClickListener(view -> finish());
+
+        mUrlEditText = findViewById(R.id.urlEdit);
+        mUrlEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String url = mUrlEditText.getEditableText().toString();
+                if (!url.contains("://") && !url.startsWith("javascript:")) {
+                    url = "https://" + url;
+                }
+                dwebView.loadUrl(url);
+                if (mUrlEditText != null) {
+                    mUrlEditText.clearFocus();
+                }
+            }
+            return true;
+        });
+        mUrlEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        });
+
+        findViewById(R.id.urlLoad).setOnClickListener(v->{
+            if (dwebView != null) {
+                String url = mUrlEditText.getEditableText().toString();
+                if (!url.contains("://") && !url.startsWith("javascript:")) {
+                    url = "https://" + url;
+                }
+                dwebView.loadUrl(url);
+            }
+            if (mUrlEditText != null) {
+                mUrlEditText.clearFocus();
+            }
+        });
+    }
+
+    private void changGoForwardButton(WebView view) {
+        try {
+            if (view.canGoBack()) {
+                mBackBtn.setImageAlpha(ENABLE_ALPHA);
+                mBackBtn.setEnabled(true);
+            } else {
+                mBackBtn.setImageAlpha(DISABLE_ALPHA);
+                mBackBtn.setEnabled(false);
+            }
+            if (view.canGoForward()) {
+                mForwardBtn.setImageAlpha(ENABLE_ALPHA);
+                mForwardBtn.setEnabled(true);
+            } else {
+                mForwardBtn.setImageAlpha(DISABLE_ALPHA);
+                mForwardBtn.setEnabled(false);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "Exception: " + t);
+        }
+    }
+
+    private void showPopupMenu(View view) {
+
+        this.showToast("设置");
+
+        //PopupMenu popupMenu = new PopupMenu(this, view);
+        //// 获取布局文件
+        //popupMenu.getMenuInflater().inflate(R.menu.website_menu, popupMenu.getMenu());
+        //popupMenu.show();
+        //final Activity fContext = this;
+        //// 通过上面这几行代码，就可以把控件显示出来了
+        //popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        //
+        //    @SuppressLint("NonConstantResourceId")
+        //    @Override
+        //    public boolean onMenuItemClick(MenuItem item) {
+        //        // 控件每一个item的点击事件
+        //        String url = "";
+        //        switch (item.getItemId()) {
+        //            case R.id.debugtbs:
+        //                url = "http://debugtbs.qq.com";
+        //                break;
+        //            case R.id.debugx5:
+        //                url = "http://debugx5.qq.com";
+        //                break;
+        //            case R.id.qrcode:
+        //                //new IntentIntegrator(fContext).initiateScan();
+        //                break;
+        //            default:
+        //                url = mHomeUrl;
+        //                break;
+        //        }
+        //        if (dwebView != null && !"".equals(url)) {
+        //            dwebView.loadUrl(url);
+        //        }
+        //        return true;
+        //    }
+        //});
+    }
+
     /* Don't care about the Base UI Logic below ^_^ */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -405,13 +541,13 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (dwebView != null && dwebView.canGoBack()) {
                 WebBackForwardList webBackForwardList = dwebView.copyBackForwardList();
-                dwebView.goBackOrForward(-1);
-                //dwebView.goBack();
-                //changGoForwardButton(mWebView);
+                //dwebView.goBackOrForward(-1);
+                dwebView.goBack();
+                changGoForwardButton(dwebView);
                 return true;
             }
             long currentTime = System.currentTimeMillis();
@@ -427,7 +563,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             return true;
         }
 
-        return super.onKeyDown(keyCode, event);
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
