@@ -103,11 +103,11 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
         //功能归类分区方法，必须调用>>>>>>>>>>
     }
 
-    @Override
-    public void initView() {
-        // 初始化webview
-        initWebView();
-        initButtons();
+    private void initSlideMenu() {
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
+        View header = mNavigationView.getHeaderView(0); // 获取头部视图
+        header.findViewById(R.id.home).setOnClickListener(this);
     }
 
     private static final int DISABLE_ALPHA = 120;
@@ -404,14 +404,14 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     private ImageButton mForwardBtn;
     private EditText mUrlEditText;
 
-    /**导航栏左侧的侧边栏的父容器*/
+    /**
+     * 导航栏左侧的侧边栏的父容器
+     */
     private DrawerLayout mDrawerLayout;
     //导航视图
     private NavigationView mNavigationView;
     private void initButtons() {
         final Context context = this.getApplicationContext();
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
         mBackBtn = findViewById(R.id.btn_back);
         mBackBtn.setImageAlpha(DISABLE_ALPHA);
         mBackBtn.setEnabled(false);
@@ -430,7 +430,8 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             }
         });
 
-        findViewById(R.id.btn_more).setOnClickListener(this::showPopupMenu);
+        findViewById(R.id.btn_more).setOnClickListener(this);
+
         findViewById(R.id.btn_reload).setOnClickListener(view -> {
             if (dwebView != null) {
                 dwebView.reload();
@@ -459,7 +460,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             }
         });
 
-        findViewById(R.id.urlLoad).setOnClickListener(v->{
+        findViewById(R.id.urlLoad).setOnClickListener(v -> {
             if (dwebView != null) {
                 String url = mUrlEditText.getEditableText().toString();
                 if (!url.contains("://") && !url.startsWith("javascript:")) {
@@ -495,10 +496,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     }
 
     private void showPopupMenu(View view) {
-        if (mDrawerLayout != null) {
-            mDrawerLayout.openDrawer(Gravity.LEFT);
-        }
-        this.showToast("设置");
+
 
         //PopupMenu popupMenu = new PopupMenu(this, view);
         //// 获取布局文件
@@ -636,6 +634,13 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
         super.onDestroy();
     }
 
+    @Override
+    public void initView() {
+        // 初始化webview
+        initWebView();
+        initButtons();
+        initSlideMenu();
+    }
 
     @Override
     public void initData() {
@@ -671,15 +676,39 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                 });
 //                toActivity(WebViewActivity.createIntent(context, "博客", Constant.APP_OFFICIAL_BLOG));
                 break;
+
+            case R.id.btn_more:
+                if (mDrawerLayout != null) {
+                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    //mDrawerLayout = viewById;
+                }
+                this.showToast("设置");
+                break;
+            case R.id.home:
+                showToast("首页");
+                dwebView.loadUrl("https://zhongyi666.top");
+
+                restoreCloseDrawerLayout();
+                break;
             default:
                 break;
         }
     }
 
+    /**
+     * 关闭左侧菜单栏
+     */
+    private void restoreCloseDrawerLayout() {
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
+            //mDrawerLayout = viewById;
+        }
+    }
+
+
     void showToast(Object o) {
         Toast.makeText(this, o.toString(), Toast.LENGTH_SHORT).show();
     }
-
 
     @Override
     public boolean onLongClick(View v) {

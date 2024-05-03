@@ -9,7 +9,6 @@
     tools:context="zblibrary.demo.activity.MyWebViewActivity">
 
 
-
     <!--<TextView-->
     <!--    android:id="@+id/llAboutWeibo"-->
     <!--    style="@style/content_item_lf_tv"-->
@@ -120,16 +119,6 @@
                 android:padding="10dp"
                 android:src="@drawable/ic_refresh_line" />
 
-            <ImageButton
-                android:id="@+id/btn_more"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="2.0dp"
-                android:layout_weight="1"
-                android:alpha="255"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="10dp"
-                android:src="@drawable/ic_service_list_fill" />
 
             <ImageButton
                 android:id="@+id/btn_exit"
@@ -141,6 +130,17 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="10dp"
                 android:src="@drawable/ic_turn_off" />
+
+            <ImageButton
+                android:id="@+id/btn_more"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="2.0dp"
+                android:layout_weight="1"
+                android:alpha="255"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:src="@drawable/ic_service_list_fill" />
         </LinearLayout>
 
     </RelativeLayout>

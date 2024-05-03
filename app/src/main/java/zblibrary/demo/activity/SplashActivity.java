@@ -32,7 +32,7 @@ public class SplashActivity extends Activity {
 
 			@Override
 			public void run() {
-//				startActivity(AboutActivity.createIntent(SplashActivity.this));
+				//startActivity(AboutActivity.createIntent(SplashActivity.this));
 				startActivity(MyWebViewActivity.createIntent(SplashActivity.this));
 				finish();
 			}
