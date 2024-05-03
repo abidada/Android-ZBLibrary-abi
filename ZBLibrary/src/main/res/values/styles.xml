@@ -623,6 +623,14 @@
         <item name="android:layout_height">@dimen/topbar_height</item>
     </style>
 
+    <style name="topbar_bg_white">
+        <item name="android:background">@color/topbar_bg_white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+
     <style name="topbar_top_simple">
         <item name="android:gravity">center_vertical</item>
         <item name="android:layout_width">fill_parent</item>
