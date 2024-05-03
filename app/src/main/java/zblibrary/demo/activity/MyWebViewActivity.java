@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,7 +42,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
 import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
 import com.tencent.smtt.export.external.interfaces.JsPromptResult;
 import com.tencent.smtt.export.external.interfaces.JsResult;
@@ -92,7 +95,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web_view, this);
+        setContentView(R.layout.activity_web_main, this);
         //功能归类分区方法，必须调用<<<<<<<<<<
         initView();
         initData();
@@ -401,8 +404,14 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     private ImageButton mForwardBtn;
     private EditText mUrlEditText;
 
+    /**导航栏左侧的侧边栏的父容器*/
+    private DrawerLayout mDrawerLayout;
+    //导航视图
+    private NavigationView mNavigationView;
     private void initButtons() {
         final Context context = this.getApplicationContext();
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
         mBackBtn = findViewById(R.id.btn_back);
         mBackBtn.setImageAlpha(DISABLE_ALPHA);
         mBackBtn.setEnabled(false);
@@ -486,7 +495,9 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     }
 
     private void showPopupMenu(View view) {
-
+        if (mDrawerLayout != null) {
+            mDrawerLayout.openDrawer(Gravity.LEFT);
+        }
         this.showToast("设置");
 
         //PopupMenu popupMenu = new PopupMenu(this, view);
