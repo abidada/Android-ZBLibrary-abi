@@ -77,7 +77,7 @@
                 android:layout_height="0dp" />
         </FrameLayout>
     </LinearLayout>
-    <RelativeLayout style="@style/topbar_bg_white">
+    <RelativeLayout style="@style/topbar_bg">
 
         <LinearLayout
             android:id="@+id/toolbar1"
