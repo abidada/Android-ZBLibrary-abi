@@ -17,7 +17,7 @@ package zblibrary.demo.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-
+import zblibrary.demo.R;
 /**闪屏activity，保证点击桌面应用图标后无延时响应
  * @author Lemon
  */
