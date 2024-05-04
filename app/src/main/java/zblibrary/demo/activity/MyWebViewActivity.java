@@ -33,11 +33,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -85,6 +87,16 @@ import zuo.biao.library.util.DataKeeper;
 public class MyWebViewActivity extends BaseActivity implements OnClickListener, OnLongClickListener, OnBottomDragListener {
     public static final String TAG = "MyWebViewActivity";
     DWebView dwebView;
+    //<!--顶部 button栏-->
+    private RelativeLayout toolbar1_top;
+    //<!--底部 button栏-->
+    private RelativeLayout toolbar1_bottom;
+    //webview主内容界面
+    private LinearLayout toolbar1;
+    //底部Button默认在下面方向
+    private String bottom_button_status = "下";
+    //底部Button默认在下面方向 文本value
+    private TextView content_item_lf_tv;
     //WebView dwebView;
 
     /**
@@ -109,12 +121,6 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
         //功能归类分区方法，必须调用>>>>>>>>>>
     }
 
-    private void initSlideMenu() {
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mNavigationView = findViewById(R.id.nav_view);
-        View header = mNavigationView.getHeaderView(0); // 获取头部视图
-        header.findViewById(R.id.home).setOnClickListener(this);
-    }
 
     private static final int DISABLE_ALPHA = 120;
     private static final int ENABLE_ALPHA = 255;
@@ -251,10 +257,10 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     private void initWebView() {
         //完全仿造D:\code\android\X5\X5Demo\app\src\main\java\com\tencent\tbs\demo\feature\BaseWebViewActivity.java
         //x5官方BaseWebViewActivity逻辑
-        //dwebView = findView(R.id.webview);
-        dwebView = new DWebView(context);
-        ViewGroup mContainer = findViewById(R.id.webViewContainer);
-        mContainer.addView(dwebView);
+        dwebView = findView(R.id.dwebview);
+        //dwebView = new DWebView(context);
+        //ViewGroup mContainer = findViewById(R.id.webViewContainer);
+        //mContainer.addView(dwebView);
 
         WebSettings webSetting = dwebView.getSettings();
         webSetting.setJavaScriptEnabled(true);
@@ -422,8 +428,25 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     private DrawerLayout mDrawerLayout;
     //导航视图
     private NavigationView mNavigationView;
-    private void initButtons() {
+    private void initOtherView() {
         final Context context = this.getApplicationContext();
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
+        View header = mNavigationView.getHeaderView(0); // 获取头部视图
+        header.findViewById(R.id.home).setOnClickListener(this);
+        header.findViewById(R.id.fontSize).setOnClickListener(this);
+        header.findViewById(R.id.cache).setOnClickListener(this);
+        header.findViewById(R.id.bottom_button).setOnClickListener(this);
+        toolbar1_top = findViewById(R.id.toolbar1_top);
+        toolbar1_bottom = findViewById(R.id.toolbar1_bottom);
+        toolbar1 = findViewById(R.id.toolbar1);
+        if (DataKeeper.contains(DataKeeper.BOTTOM_BUTTON_STATUS)) {
+            bottom_button_status = DataKeeper.getString(DataKeeper.BOTTOM_BUTTON_STATUS);
+        }
+        content_item_lf_tv = header.findViewById(R.id.bottom_button_status);
+        content_item_lf_tv.setText(bottom_button_status);
+        setDefaultButtonStatus();
+
         mBackBtn = findViewById(R.id.btn_back);
         mBackBtn.setImageAlpha(DISABLE_ALPHA);
         mBackBtn.setEnabled(false);
@@ -451,83 +474,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             }
         });
         findViewById(R.id.btn_exit).setOnClickListener(view -> {
-            LDialog dialog = LDialog.newInstance(this, R.layout.dialog_confirm2) //设置你的布局
-                    .setGravity(Gravity.BOTTOM)
-                    .setAnimations(LAnimationsType.BOTTOM)
-//                .setWidthRatio(1)
-                    .setBgColor(Color.WHITE)
-                    //.setBgColor(GradientDrawable.Orientation.BOTTOM_TOP, "#00FEE9", "#008EB4")
-                    .setBgRadius(10, 10, 0, 0)
-//                .setWidth(200)
-//                .setMaxHeight(400)
-                    //.setAnimationsStyle(R.style.dialog_translate)
-                    .setMaskValue(0.3f)
-                    //设置布局控件的值
-                    .setText(R.id.tv_title, "设置");
-            //
-            ////确定
-            //dialog.getView(R.id.tv_confirm).setOnClickListener(new OnClickListener() {
-            //    @Override
-            //    public void onClick(View v) {
-            //
-            //
-            //        dialog.dismiss();
-            //    }
-            //});
-            //取消
-            dialog.getView(R.id.tv_cancel).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            //.setText(R.id.tv_content, "确定要退出登录吗？>>>>>>>>>>>")
-            //.setCancelBtn(R.id.tv_cancel, R.id.tv_confirm)
-            //.setOnClickListener(new OnClickListener() {
-            //    @Override
-            //    public void onClick(View v) {
-            //    }
-            //} , R.id.tv_confirm); //可以设多控件
-            TextRatingBar textRatingBar = dialog.getView(R.id.textRatingBar);
-            int mRating = 0;
-            resetTextRatingBarStatus(mRating, textRatingBar);
-            //TextRatingBar textRatingBar = findViewById(R.id.textRatingBar);
-            textRatingBar.setOnRatingListener(new OnRatingListener() {
-                @Override
-                public void onRating(int rating) {
-                    // textZoom:100表示正常，120表示文字放大1.2倍
-
-                    switch (rating) {
-                        case 0: //超小
-                            textZoom = 70;
-                            break;
-                        case 1: //小
-                            textZoom = 80;
-                            break;
-                        case 2: //默认
-                            textZoom = 100;
-                            break;
-                        case 3://中
-                            textZoom = 110;
-                            break;
-                        case 4://大
-                            textZoom = 120;
-                            break;
-                        case 5://超大
-                            textZoom = 121;
-                            break;
-                    }
-                    //确认时,存储更改字体大小值
-                    //todo 每次设置,直接存储
-                    dwebView.getSettings().setTextZoom(textZoom);
-                    DataKeeper.save(DataKeeper.TEXT_ZOOM, String.valueOf(textZoom));
-                    Log.i("1111", rating + "");
-                }
-            });
-            dialog.setGravity(Gravity.BOTTOM)
-                    .setAnimations(LAnimationsType.BOTTOM);
-            dialog.show();
-
+            //showFontSizeDialog();
             //finish();
         });
 
@@ -564,6 +511,88 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                 mUrlEditText.clearFocus();
             }
         });
+    }
+
+    /**
+     * 显示字体对话框
+     */
+    private void showFontSizeDialog() {
+        LDialog dialog = LDialog.newInstance(this, R.layout.dialog_confirm2) //设置你的布局
+                .setGravity(Gravity.BOTTOM)
+                .setAnimations(LAnimationsType.BOTTOM)
+//                .setWidthRatio(1)
+                .setBgColor(Color.WHITE)
+                //.setBgColor(GradientDrawable.Orientation.BOTTOM_TOP, "#00FEE9", "#008EB4")
+                .setBgRadius(10, 10, 0, 0)
+//                .setWidth(200)
+//                .setMaxHeight(400)
+                //.setAnimationsStyle(R.style.dialog_translate)
+                .setMaskValue(0.3f)
+                //设置布局控件的值
+                .setText(R.id.tv_title, "设置");
+        //
+        ////确定
+        //dialog.getView(R.id.tv_confirm).setOnClickListener(new OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //
+        //
+        //        dialog.dismiss();
+        //    }
+        //});
+        //取消
+        dialog.getView(R.id.tv_cancel).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        //.setText(R.id.tv_content, "确定要退出登录吗？>>>>>>>>>>>")
+        //.setCancelBtn(R.id.tv_cancel, R.id.tv_confirm)
+        //.setOnClickListener(new OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //    }
+        //} , R.id.tv_confirm); //可以设多控件
+        TextRatingBar textRatingBar = dialog.getView(R.id.textRatingBar);
+        int mRating = 0;
+        resetTextRatingBarStatus(mRating, textRatingBar);
+        //TextRatingBar textRatingBar = findViewById(R.id.textRatingBar);
+        textRatingBar.setOnRatingListener(new OnRatingListener() {
+            @Override
+            public void onRating(int rating) {
+                // textZoom:100表示正常，120表示文字放大1.2倍
+
+                switch (rating) {
+                    case 0: //超小
+                        textZoom = 70;
+                        break;
+                    case 1: //小
+                        textZoom = 80;
+                        break;
+                    case 2: //默认
+                        textZoom = 100;
+                        break;
+                    case 3://中
+                        textZoom = 110;
+                        break;
+                    case 4://大
+                        textZoom = 120;
+                        break;
+                    case 5://超大
+                        textZoom = 121;
+                        break;
+                }
+                //确认时,存储更改字体大小值
+                //todo 每次设置,直接存储
+                dwebView.getSettings().setTextZoom(textZoom);
+                DataKeeper.save(DataKeeper.TEXT_ZOOM, String.valueOf(textZoom));
+                Log.i("1111", rating + "");
+            }
+        });
+        dialog.setGravity(Gravity.BOTTOM)
+                .setAnimations(LAnimationsType.BOTTOM);
+        dialog.show();
     }
 
     private void resetTextRatingBarStatus(int mRating, TextRatingBar textRatingBar) {
@@ -755,8 +784,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
     public void initView() {
         // 初始化webview
         initWebView();
-        initButtons();
-        initSlideMenu();
+        initOtherView();
     }
 
     @Override
@@ -803,11 +831,71 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             case R.id.home:
                 showToast("首页");
                 dwebView.loadUrl("https://zhongyi666.top");
+                restoreCloseDrawerLayout();
+                break;
+            case R.id.fontSize:
+                //更改字体
+                showFontSizeDialog();
+                restoreCloseDrawerLayout();
+                break;
+            case R.id.cache:
 
+                break;
+            case R.id.bottom_button:
+                if (DataKeeper.contains(DataKeeper.BOTTOM_BUTTON_STATUS)) {
+                    bottom_button_status = DataKeeper.getString(DataKeeper.BOTTOM_BUTTON_STATUS);
+                }
+
+                if (bottom_button_status.equals("下")) {
+                    DataKeeper.save(DataKeeper.BOTTOM_BUTTON_STATUS, "上");
+                    content_item_lf_tv.setText("上");
+                } else {
+                    DataKeeper.save(DataKeeper.BOTTOM_BUTTON_STATUS, "下");
+                    content_item_lf_tv.setText("下");
+                }
+                setButtonStatus();
                 restoreCloseDrawerLayout();
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 设置底部Button方向
+     */
+    private void setButtonStatus() {
+        if (bottom_button_status.equals("下")) {
+            toolbar1_top.removeView(toolbar1);
+            toolbar1_bottom.removeView(toolbar1);
+            toolbar1_top.setVisibility(View.VISIBLE);
+            toolbar1_bottom.setVisibility(View.GONE);
+            toolbar1_top.addView(toolbar1);
+        } else {
+            toolbar1_top.removeView(toolbar1);
+            toolbar1_bottom.removeView(toolbar1);
+            toolbar1_top.setVisibility(View.GONE);
+            toolbar1_bottom.setVisibility(View.VISIBLE);
+            toolbar1_bottom.addView(toolbar1);
+        }
+    }
+
+    /**
+     * 设置底部Button默认方向
+     */
+    private void setDefaultButtonStatus() {
+        if (bottom_button_status.equals("下")) {
+            toolbar1_top.removeView(toolbar1);
+            toolbar1_bottom.removeView(toolbar1);
+            toolbar1_top.setVisibility(View.GONE);
+            toolbar1_bottom.setVisibility(View.VISIBLE);
+            toolbar1_bottom.addView(toolbar1);
+        } else {
+            toolbar1_top.removeView(toolbar1);
+            toolbar1_bottom.removeView(toolbar1);
+            toolbar1_top.setVisibility(View.VISIBLE);
+            toolbar1_bottom.setVisibility(View.GONE);
+            toolbar1_top.addView(toolbar1);
         }
     }
 

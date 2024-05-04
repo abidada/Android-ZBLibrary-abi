@@ -15,13 +15,11 @@
             android:orientation="vertical">
             <LinearLayout
                 android:id="@+id/llSettingAppSettingContainer"
-                android:layout_marginTop="30dp"
-                style="@style/ll_vertical_match_wrap">
-
+                style="@style/ll_vertical_match_wrap"
+                android:layout_marginTop="30dp">
                 <LinearLayout
                     android:id="@+id/home"
-                    style="@style/content_item_white"
-                   >
+                    style="@style/content_item_white">
 
                     <TextView
                         style="@style/content_item_lf_tv"
@@ -33,7 +31,74 @@
 
                 <View style="@style/divider_horizontal_1px" />
 
+                <!--<View-->
+                <!--    style="@style/divider_horizontal_1px"-->
+                <!--    android:layout_marginBottom="@dimen/item_distance" />-->
 
+                <LinearLayout
+                    android:id="@+id/setting"
+                    style="@style/content_item_white">
+
+                    <TextView
+                        style="@style/content_item_lf_tv"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="设置" />
+
+                    <!--<ImageView style="@style/content_item_rt_img" />-->
+                </LinearLayout>
+
+                <View style="@style/divider_horizontal_1px" />
+
+                <LinearLayout
+                    android:id="@+id/fontSize"
+                    style="@style/content_item_white">
+
+                    <TextView
+                        style="@style/content_item_lf_tv"
+                        android:layout_weight="1"
+                        android:text="字体大小" />
+
+                    <!--<ImageView style="@style/content_item_rt_img" />-->
+                </LinearLayout>
+
+                <View style="@style/divider_horizontal_1px" />
+
+                <LinearLayout
+                    android:id="@+id/cache"
+                    style="@style/content_item_white">
+
+                    <TextView
+                        style="@style/content_item_lf_tv"
+                        android:layout_weight="1"
+                        android:text="清除缓存" />
+
+                    <!--<ImageView style="@style/content_item_rt_img" />-->
+                </LinearLayout>
+
+                <View style="@style/divider_horizontal_1px" />
+
+                <LinearLayout
+                    android:id="@+id/bottom_button"
+                    style="@style/content_item_white">
+
+                    <TextView
+                        style="@style/content_item_lf_tv"
+                        android:layout_weight="1"
+                        android:text="底部导航栏" />
+
+                    <TextView
+                        style="@style/content_item_lf_tv"
+                        android:id="@+id/bottom_button_status"
+                        android:layout_weight="1"
+                        android:textSize="10pt"
+                        android:gravity="left"
+                        android:text="下" />
+
+                    <!--<ImageView style="@style/content_item_rt_img" />-->
+                </LinearLayout>
+
+                <View style="@style/divider_horizontal_1px" />
                 <!--<LinearLayout style="@style/content_item_white">-->
 
                 <!--    <TextView-->

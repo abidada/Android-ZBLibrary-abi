@@ -8,6 +8,12 @@
     android:orientation="vertical"
     tools:context="zblibrary.demo.activity.MyWebViewActivity">
 
+    <!--顶部 button栏-->
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/toolbar1_top"
+        style="@style/topbar_bg_white"></RelativeLayout>
+
 
     <!--<TextView-->
     <!--    android:id="@+id/llAboutWeibo"-->
@@ -16,6 +22,7 @@
     <!--    android:text="" />-->
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -58,25 +65,28 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-
-        <!--<wendu.dsbridge.DWebView-->
-        <!--    android:id="@+id/webview"-->
-        <!--    android:layout_width="match_parent"-->
-        <!--    android:layout_height="match_parent"-->
-        <!--    android:visibility="visible" />-->
-        <FrameLayout
-            android:id="@+id/webViewContainer"
+        <wendu.dsbridge.DWebView
+            android:id="@+id/dwebview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/darker_gray">
+           />
+        <!--<FrameLayout-->
+        <!--    android:id="@+id/webViewContainer"-->
+        <!--    android:layout_width="match_parent"-->
+        <!--    android:layout_height="match_parent"-->
+        <!--    android:background="@android:color/darker_gray">-->
 
-            <View
-                android:id="@+id/select_popup_view"
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-        </FrameLayout>
+        <!--    <View-->
+        <!--        android:id="@+id/select_popup_view"-->
+        <!--        android:layout_width="0dp"-->
+        <!--        android:layout_height="0dp" />-->
+        <!--</FrameLayout>-->
     </LinearLayout>
-    <RelativeLayout style="@style/topbar_bg_white">
+
+    <!--底部button栏-->
+    <RelativeLayout
+        android:id="@+id/toolbar1_bottom"
+        style="@style/topbar_bg_white">
 
         <LinearLayout
             android:id="@+id/toolbar1"
@@ -117,7 +127,8 @@
                 android:alpha="255"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="10dp"
-                android:src="@drawable/ic_refresh_line" />
+                android:src="@drawable/ic_refresh_line"
+                android:visibility="gone" />
 
 
             <ImageButton
@@ -129,7 +140,8 @@
                 android:alpha="255"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:padding="10dp"
-                android:src="@drawable/ic_turn_off" />
+                android:src="@drawable/ic_turn_off"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/btn_more"

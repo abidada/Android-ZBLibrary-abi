@@ -36,6 +36,7 @@ public class DataKeeper {
 
     //字体大小key
     public static final String TEXT_ZOOM = "textZoom";
+    public static final String BOTTOM_BUTTON_STATUS = "bottomButtonStatus";
 
 
     public static final String SAVE_SUCCEED = "保存成功";
