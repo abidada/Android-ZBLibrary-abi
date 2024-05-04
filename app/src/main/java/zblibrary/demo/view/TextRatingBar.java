@@ -71,7 +71,7 @@ public class TextRatingBar extends View {
             paint.setColor(Color.RED);
             canvas.drawLine(mLeft + i * mUnitSize, mYOffset - mMarkSize, mLeft + i * mUnitSize, mYOffset + mMarkSize, paint);
             paint.setColor(mRating == i ? Color.RED : Color.BLACK);
-            paint.setTextSize(30);
+            paint.setTextSize(50);
             paint.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(texts[i], mLeft + i * mUnitSize, mTop, paint);
         }

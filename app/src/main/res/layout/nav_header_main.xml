@@ -65,13 +65,21 @@
                 <View style="@style/divider_horizontal_1px" />
 
                 <LinearLayout
-                    android:id="@+id/cache"
+                    android:id="@+id/bottom_button"
                     style="@style/content_item_white">
 
                     <TextView
                         style="@style/content_item_lf_tv"
                         android:layout_weight="1"
-                        android:text="清除缓存" />
+                        android:text="导航栏方向" />
+
+                    <TextView
+                        style="@style/content_item_lf_tv"
+                        android:id="@+id/bottom_button_status"
+                        android:layout_weight="1"
+                        android:textSize="20dp"
+                        android:gravity="left"
+                        android:text="下" />
 
                     <!--<ImageView style="@style/content_item_rt_img" />-->
                 </LinearLayout>
@@ -79,21 +87,13 @@
                 <View style="@style/divider_horizontal_1px" />
 
                 <LinearLayout
-                    android:id="@+id/bottom_button"
+                    android:id="@+id/cache"
                     style="@style/content_item_white">
 
                     <TextView
                         style="@style/content_item_lf_tv"
                         android:layout_weight="1"
-                        android:text="底部导航栏" />
-
-                    <TextView
-                        style="@style/content_item_lf_tv"
-                        android:id="@+id/bottom_button_status"
-                        android:layout_weight="1"
-                        android:textSize="10pt"
-                        android:gravity="left"
-                        android:text="下" />
+                        android:text="清除缓存" />
 
                     <!--<ImageView style="@style/content_item_rt_img" />-->
                 </LinearLayout>

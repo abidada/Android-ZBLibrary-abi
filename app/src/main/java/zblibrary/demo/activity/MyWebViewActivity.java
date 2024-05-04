@@ -53,6 +53,7 @@ import com.tencent.smtt.export.external.interfaces.JsPromptResult;
 import com.tencent.smtt.export.external.interfaces.JsResult;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
+import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebBackForwardList;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -793,8 +794,9 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
 
     @Override
     public void initEvent() {
-//        findView(R.id.llAboutWeibo, this).setOnLongClickListener(this);
-        this.showToast("Android原生toast");
+//        this.showToast("Android原生toast");
+//        Toast.makeText(this, dwebView.getIsX5Core() ?
+//                "X5内核: " + QbSdk.getTbsVersion(this) : "SDK系统内核" , Toast.LENGTH_SHORT).show();
     }
 
     //系统自带监听方法<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -826,7 +828,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                     mDrawerLayout.openDrawer(Gravity.LEFT);
                     //mDrawerLayout = viewById;
                 }
-                this.showToast("设置");
+                //this.showToast("设置");
                 break;
             case R.id.home:
                 showToast("首页");
@@ -838,9 +840,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                 showFontSizeDialog();
                 restoreCloseDrawerLayout();
                 break;
-            case R.id.cache:
 
-                break;
             case R.id.bottom_button:
                 if (DataKeeper.contains(DataKeeper.BOTTOM_BUTTON_STATUS)) {
                     bottom_button_status = DataKeeper.getString(DataKeeper.BOTTOM_BUTTON_STATUS);
@@ -849,12 +849,53 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                 if (bottom_button_status.equals("下")) {
                     DataKeeper.save(DataKeeper.BOTTOM_BUTTON_STATUS, "上");
                     content_item_lf_tv.setText("上");
+                    showToast("导航栏:向上");
                 } else {
                     DataKeeper.save(DataKeeper.BOTTOM_BUTTON_STATUS, "下");
                     content_item_lf_tv.setText("下");
+                    showToast("导航栏:向下");
                 }
                 setButtonStatus();
                 restoreCloseDrawerLayout();
+                break;
+            case R.id.cache:
+                restoreCloseDrawerLayout();
+                ////方法一：针对性删除
+                ////清除cookie
+                //CookieManager.getInstance().removeAllCookies(null);
+                ////清除storage相关缓存
+                //WebStorage.getInstance().deleteAllData();
+                ////清除用户密码信息
+                //WebViewDatabase.getInstance(Context context).clearUsernamePassword();
+                ////清除httpauth信息
+                //WebViewDatabase.getInstance(Context context).clearHttpAuthUsernamePassword();
+                ////清除表单数据
+                //WebViewDatabase.getInstance(Context context).clearFormData();
+                ////清除页面icon图标信息
+                //WebIconDatabase.getInstance().removeAllIcons();
+                ////删除地理位置授权，也可以删除某个域名的授权（参考接口类）
+                //                    GeolocationPermissions.getInstance().clearAll();
+
+                //方法二：一次性删除所有缓存
+                //清除cookie
+                //QbSdk.clearAllWebViewCache(Context context, boolean isClearCookie)
+                new zuo.biao.library.ui.AlertDialog(context, "清除缓存", "确定要清除缓存？", true, 0, new zuo.biao.library.ui.AlertDialog.OnDialogButtonClickListener() {
+                    @Override
+                    public void onDialogButtonClick(int requestCode, boolean isPositive) {
+                        if (!isPositive) {
+                            return;
+                        }
+                        switch (requestCode) {
+                            case 0:
+                                //logout();
+                                QbSdk.clearAllWebViewCache(context, true);
+                                showToast("缓存清除成功");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }).show();
                 break;
             default:
                 break;
