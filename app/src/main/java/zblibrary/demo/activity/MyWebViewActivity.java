@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -64,12 +65,17 @@ import java.io.InputStream;
 import wendu.dsbridge.DWebView;
 import wendu.dsbridge.OnReturnValue;
 import zblibrary.demo.R;
+import zblibrary.demo.interfaces.OnRatingListener;
 import zblibrary.demo.util.Constant;
 import zblibrary.demo.util.h5.JsApi;
 import zblibrary.demo.util.h5.JsEchoApi;
+import zblibrary.demo.view.TextRatingBar;
+import zblibrary.demo.view.dialoglib.LAnimationsType;
+import zblibrary.demo.view.dialoglib.LDialog;
 import zuo.biao.library.base.BaseActivity;
 import zuo.biao.library.interfaces.OnBottomDragListener;
 import zuo.biao.library.util.CommonUtil;
+import zuo.biao.library.util.DataKeeper;
 
 /**
  * 联系人资料界面
@@ -236,6 +242,8 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
             }
         });
     }
+    // textZoom:100表示正常，120表示文字放大1.2倍 ,默认90
+    private int textZoom = 90;
 
     /**
      * 初始化webview
@@ -264,7 +272,11 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
         dwebView.setWebContentsDebuggingEnabled(true);
         // 排版适应屏幕
         // textZoom:100表示正常，120表示文字放大1.2倍
-        dwebView.getSettings().setTextZoom(80);
+        //先从缓存中取,没有就使用默认值
+        if (DataKeeper.contains(DataKeeper.TEXT_ZOOM)) {
+            textZoom = Integer.parseInt(DataKeeper.getString(DataKeeper.TEXT_ZOOM));
+        }
+        dwebView.getSettings().setTextZoom(textZoom);
         //该方法可以获取当前文字大小
         Log.i(TAG, String.valueOf(dwebView.getSettings().getTextZoom()));
 
@@ -432,12 +444,92 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
 
         findViewById(R.id.btn_more).setOnClickListener(this);
 
+        //刷新
         findViewById(R.id.btn_reload).setOnClickListener(view -> {
             if (dwebView != null) {
                 dwebView.reload();
             }
         });
-        findViewById(R.id.btn_exit).setOnClickListener(view -> finish());
+        findViewById(R.id.btn_exit).setOnClickListener(view -> {
+            LDialog dialog = LDialog.newInstance(this, R.layout.dialog_confirm2) //设置你的布局
+                    .setGravity(Gravity.BOTTOM)
+                    .setAnimations(LAnimationsType.BOTTOM)
+//                .setWidthRatio(1)
+                    .setBgColor(Color.WHITE)
+                    //.setBgColor(GradientDrawable.Orientation.BOTTOM_TOP, "#00FEE9", "#008EB4")
+                    .setBgRadius(10, 10, 0, 0)
+//                .setWidth(200)
+//                .setMaxHeight(400)
+                    //.setAnimationsStyle(R.style.dialog_translate)
+                    .setMaskValue(0.3f)
+                    //设置布局控件的值
+                    .setText(R.id.tv_title, "设置");
+            //
+            ////确定
+            //dialog.getView(R.id.tv_confirm).setOnClickListener(new OnClickListener() {
+            //    @Override
+            //    public void onClick(View v) {
+            //
+            //
+            //        dialog.dismiss();
+            //    }
+            //});
+            //取消
+            dialog.getView(R.id.tv_cancel).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            //.setText(R.id.tv_content, "确定要退出登录吗？>>>>>>>>>>>")
+            //.setCancelBtn(R.id.tv_cancel, R.id.tv_confirm)
+            //.setOnClickListener(new OnClickListener() {
+            //    @Override
+            //    public void onClick(View v) {
+            //    }
+            //} , R.id.tv_confirm); //可以设多控件
+            TextRatingBar textRatingBar = dialog.getView(R.id.textRatingBar);
+            int mRating = 0;
+            resetTextRatingBarStatus(mRating, textRatingBar);
+            //TextRatingBar textRatingBar = findViewById(R.id.textRatingBar);
+            textRatingBar.setOnRatingListener(new OnRatingListener() {
+                @Override
+                public void onRating(int rating) {
+                    // textZoom:100表示正常，120表示文字放大1.2倍
+
+                    switch (rating) {
+                        case 0: //超小
+                            textZoom = 70;
+                            break;
+                        case 1: //小
+                            textZoom = 80;
+                            break;
+                        case 2: //默认
+                            textZoom = 100;
+                            break;
+                        case 3://中
+                            textZoom = 110;
+                            break;
+                        case 4://大
+                            textZoom = 120;
+                            break;
+                        case 5://超大
+                            textZoom = 121;
+                            break;
+                    }
+                    //确认时,存储更改字体大小值
+                    //todo 每次设置,直接存储
+                    dwebView.getSettings().setTextZoom(textZoom);
+                    DataKeeper.save(DataKeeper.TEXT_ZOOM, String.valueOf(textZoom));
+                    Log.i("1111", rating + "");
+                }
+            });
+            dialog.setGravity(Gravity.BOTTOM)
+                    .setAnimations(LAnimationsType.BOTTOM);
+            dialog.show();
+
+            //finish();
+        });
 
         mUrlEditText = findViewById(R.id.urlEdit);
         mUrlEditText.setOnEditorActionListener((v, actionId, event) -> {
@@ -472,6 +564,31 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
                 mUrlEditText.clearFocus();
             }
         });
+    }
+
+    private void resetTextRatingBarStatus(int mRating, TextRatingBar textRatingBar) {
+        switch (textZoom) {
+            case 70: //超小
+                mRating = 0;
+                break;
+            case 80: //小
+                mRating = 1;
+                break;
+            case 100: //默认
+                mRating = 2;
+                break;
+            case 110://中
+                mRating = 3;
+                break;
+            case 120://大
+                mRating = 4;
+                break;
+            case 121://超大
+                mRating = 5;
+                break;
+        }
+        //恢复之前选择的 mRating
+        textRatingBar.setRating(mRating);
     }
 
     private void changGoForwardButton(WebView view) {
@@ -659,8 +776,7 @@ public class MyWebViewActivity extends BaseActivity implements OnClickListener, 
         if (rightToLeft) {
             return;
         }
-
-        finish();
+        //finish();
     }
 
     @Override
